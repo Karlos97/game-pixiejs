@@ -15,8 +15,8 @@ export const players = pgTable("players", {
     .default(sql`gen_random_uuid()`),
   name: text("name").notNull().unique(),
   coins: integer("coins").notNull().default(1000),
-  posX: doublePrecision("pos_x").notNull().default(1000),
-  posY: doublePrecision("pos_y").notNull().default(1000),
+  posX: doublePrecision("pos_x").notNull().default(656),
+  posY: doublePrecision("pos_y").notNull().default(624),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

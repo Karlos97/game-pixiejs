@@ -28,7 +28,7 @@ interface WorldSceneOptions {
 
 const INTERACTION_RADIUS = 60;
 
-const PLAYER_SPAWN = { col: 20, row: 17 };
+const PLAYER_SPAWN = { col: 20, row: 19 };
 const MIN_WALKABLE_NEIGHBORS = 3;
 
 export class WorldScene {

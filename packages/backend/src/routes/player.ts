@@ -48,7 +48,13 @@ export const playerRoute: FastifyPluginAsync = async (app) => {
         const existing = await getPlayer(request.session.playerName);
         if (existing) {
           setSessionCookie(reply, existing.name);
-          return { playerId: existing.id, name: existing.name, coins: existing.coins };
+          return {
+            playerId: existing.id,
+            name: existing.name,
+            coins: existing.coins,
+            posX: existing.posX,
+            posY: existing.posY,
+          };
         }
       }
 
@@ -60,7 +66,13 @@ export const playerRoute: FastifyPluginAsync = async (app) => {
           return;
         }
         setSessionCookie(reply, row.name);
-        return { playerId: row.id, name: row.name, coins: row.coins };
+        return {
+          playerId: row.id,
+          name: row.name,
+          coins: row.coins,
+          posX: row.posX,
+          posY: row.posY,
+        };
       }
 
       for (let attempt = 0; attempt < MAX_AUTO_NAME_ATTEMPTS; attempt++) {
@@ -68,7 +80,13 @@ export const playerRoute: FastifyPluginAsync = async (app) => {
         const row = await createPlayer(name);
         if (row) {
           setSessionCookie(reply, row.name);
-          return { playerId: row.id, name: row.name, coins: row.coins };
+          return {
+            playerId: row.id,
+            name: row.name,
+            coins: row.coins,
+            posX: row.posX,
+            posY: row.posY,
+          };
         }
       }
       reply.code(500).send({ error: "NAME_GEN_FAILED" });

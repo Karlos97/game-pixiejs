@@ -44,7 +44,7 @@ export function App() {
       if (cancelled) return;
       setPlayerName(created.name);
       setCoins(created.coins);
-      setPlayerPosition({ x: 1000, y: 1000 });
+      setPlayerPosition({ x: created.posX, y: created.posY });
     };
 
     Promise.allSettled([bootstrap(), fetchNPCs()]).then(([_, npcsResult]) => {

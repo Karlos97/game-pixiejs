@@ -15,6 +15,13 @@
       "when": 1779465469111,
       "tag": "0001_roulette",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1779638400000,
+      "tag": "0002_fix_spawn_default",
+      "breakpoints": true
     }
   ]
 }

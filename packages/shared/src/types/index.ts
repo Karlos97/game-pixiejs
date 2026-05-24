@@ -58,6 +58,8 @@ export interface CreatePlayerResponse {
   playerId: string;
   name: string;
   coins: number;
+  posX: number;
+  posY: number;
 }
 
 export interface HealthResponse {
