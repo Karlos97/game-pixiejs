@@ -1,0 +1,45 @@
+@use "../../../styles/variables" as v;
+
+.button {
+  padding: 10px 20px;
+  border: 1px solid v.$color-border;
+  border-radius: v.$radius-md;
+  font-family: v.$font-ui;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.08s ease,
+    background 0.15s ease;
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.primary {
+  background: v.$color-accent;
+  color: #1a1a1a;
+
+  &:hover {
+    background: #ffd633;
+  }
+}
+
+.secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: v.$color-text;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+.danger {
+  background: #c0392b;
+  color: white;
+
+  &:hover {
+    background: #e74c3c;
+  }
+}

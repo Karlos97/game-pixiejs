@@ -1,0 +1,8 @@
+node_modules
+dist
+build
+**/dist
+**/build
+pnpm-lock.yaml
+.claude
+packages/backend/prisma/migrations

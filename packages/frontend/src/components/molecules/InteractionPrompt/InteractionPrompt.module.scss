@@ -1,0 +1,40 @@
+@use "../../../styles/variables" as v;
+
+.prompt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: v.$color-panel;
+  border: 1px solid v.$color-border;
+  border-radius: v.$radius-md;
+  backdrop-filter: blur(10px);
+  font-family: v.$font-ui;
+  font-size: 14px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+  background: v.$color-accent;
+  color: #1a1a1a;
+  border-radius: v.$radius-sm;
+  font-family: v.$font-ui;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}

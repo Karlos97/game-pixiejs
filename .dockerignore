@@ -1,0 +1,11 @@
+node_modules
+**/node_modules
+dist
+**/dist
+.git
+.claude
+.vscode
+.idea
+*.log
+.env
+.env.local

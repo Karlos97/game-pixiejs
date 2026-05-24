@@ -1,0 +1,1 @@
+export { OutOfCoinsModal } from "./OutOfCoinsModal";

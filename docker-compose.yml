@@ -1,0 +1,57 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: game
+      POSTGRES_PASSWORD: game
+      POSTGRES_DB: game
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U game -d game"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: packages/backend/Dockerfile
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://game:game@postgres:5432/game
+      PORT: 3001
+      HOST: 0.0.0.0
+      LOG_LEVEL: info
+      # Local dev only — stable secret so cookies survive container restarts.
+      # Production uses ${SESSION_SECRET} which is required (see docker-compose.prod.yml).
+      SESSION_SECRET: dev-only-session-secret-not-for-production-use!!
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./packages/backend/src:/workspace/packages/backend/src
+      - ./packages/backend/drizzle:/workspace/packages/backend/drizzle
+      - ./packages/backend/drizzle.config.ts:/workspace/packages/backend/drizzle.config.ts
+      - ./packages/shared/src:/workspace/packages/shared/src
+
+  frontend:
+    build:
+      context: .
+      dockerfile: packages/frontend/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ./packages/frontend/src:/workspace/packages/frontend/src
+      - ./packages/frontend/public:/workspace/packages/frontend/public
+      - ./packages/frontend/index.html:/workspace/packages/frontend/index.html
+      - ./packages/shared/src:/workspace/packages/shared/src
+
+volumes:
+  pgdata:

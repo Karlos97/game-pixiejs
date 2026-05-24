@@ -1,0 +1,37 @@
+@use "../../../styles/variables" as v;
+
+.hud {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  z-index: v.$z-hud;
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 16px;
+  background: v.$color-panel;
+  border: 1px solid v.$color-border;
+  border-radius: v.$radius-md;
+  backdrop-filter: blur(10px);
+}
+
+.playerName {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.right {
+  display: flex;
+}

@@ -1,0 +1,21 @@
+@use "../../../styles/variables" as v;
+
+.line {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.speaker {
+  font-size: 13px;
+  font-weight: 700;
+  color: v.$color-accent;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.text {
+  font-size: 16px;
+  line-height: 1.5;
+  color: v.$color-text;
+}

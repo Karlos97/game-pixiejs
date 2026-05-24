@@ -1,0 +1,8 @@
+@use "../../../styles/variables" as v;
+
+.coin {
+  display: inline-block;
+  color: v.$color-accent;
+  font-size: 1.1em;
+  text-shadow: 0 0 6px rgba(255, 204, 0, 0.6);
+}

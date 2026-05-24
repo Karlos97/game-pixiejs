@@ -1,0 +1,20 @@
+$color-bg: #0d0d12;
+$color-text: #f5f5f7;
+$color-accent: #ffcc00;
+$color-panel: rgba(20, 20, 30, 0.85);
+$color-border: rgba(255, 255, 255, 0.1);
+
+$font-ui:
+  system-ui,
+  -apple-system,
+  "Segoe UI",
+  sans-serif;
+
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 16px;
+
+$z-canvas: 0;
+$z-hud: 10;
+$z-dialog: 20;
+$z-modal: 30;

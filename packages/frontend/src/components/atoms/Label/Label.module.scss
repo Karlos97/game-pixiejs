@@ -1,0 +1,13 @@
+@use "../../../styles/variables" as v;
+
+.label {
+  font-family: v.$font-ui;
+  font-size: 14px;
+  color: v.$color-text;
+}
+
+.muted {
+  font-family: v.$font-ui;
+  font-size: 13px;
+  color: rgba(245, 245, 247, 0.65);
+}

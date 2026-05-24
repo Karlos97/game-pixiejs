@@ -1,0 +1,138 @@
+name: pixie-game-prod
+
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  pixie-game-prod-postgres:
+    image: postgres:16-alpine
+    container_name: pixie-game-prod-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-game}
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_DB: ${POSTGRES_DB:-game}
+    secrets:
+      - postgres_password
+    volumes:
+      - pixie-game-prod-postgres-data:/var/lib/postgresql/data
+    networks:
+      - pixie-game-prod-network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U $${POSTGRES_USER:-game} -d $${POSTGRES_DB:-game}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    mem_limit: 1g
+    mem_reservation: 256m
+    cpus: 1.0
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/run/postgresql
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+      - FOWNER
+      - DAC_OVERRIDE
+    logging: *default-logging
+
+  pixie-game-prod-backend:
+    build:
+      context: .
+      dockerfile: packages/backend/Dockerfile.prod
+    image: pixie-game-prod-backend:latest
+    container_name: pixie-game-prod-backend
+    restart: unless-stopped
+    environment:
+      POSTGRES_HOST: pixie-game-prod-postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: ${POSTGRES_USER:-game}
+      POSTGRES_DB: ${POSTGRES_DB:-game}
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      SESSION_SECRET_FILE: /run/secrets/session_secret
+      PORT: 3001
+      HOST: 0.0.0.0
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      CORS_ORIGIN: ${CORS_ORIGIN:?CORS_ORIGIN is required in production}
+      NODE_ENV: production
+    secrets:
+      - postgres_password
+      - session_secret
+    depends_on:
+      pixie-game-prod-postgres:
+        condition: service_healthy
+    networks:
+      pixie-game-prod-network:
+        aliases:
+          - backend
+      proxy-network:
+    mem_limit: 512m
+    mem_reservation: 128m
+    cpus: 0.5
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging: *default-logging
+
+  pixie-game-prod-frontend:
+    build:
+      context: .
+      dockerfile: packages/frontend/Dockerfile.prod
+      args:
+        VITE_API_URL: ${VITE_API_URL:-/api}
+    image: pixie-game-prod-frontend:latest
+    container_name: pixie-game-prod-frontend
+    restart: unless-stopped
+    depends_on:
+      pixie-game-prod-backend:
+        condition: service_started
+    networks:
+      - pixie-game-prod-network
+      - proxy-network
+    mem_limit: 128m
+    mem_reservation: 32m
+    cpus: 0.25
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx
+      - /var/run
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging: *default-logging
+
+secrets:
+  postgres_password:
+    file: ./secrets/postgres_password
+  session_secret:
+    file: ./secrets/session_secret
+
+volumes:
+  pixie-game-prod-postgres-data:
+    external: true
+    name: game-pixiejs_pgdata
+
+networks:
+  pixie-game-prod-network:
+    driver: bridge
+  proxy-network:
+    external: true

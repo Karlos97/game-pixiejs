@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# Env
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json.example
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Coverage
+coverage/
+*.lcov
+.nyc_output/
+
+# Vite
+.vite/
+
+# Prisma
+packages/backend/prisma/migrations/dev.db*
+
+# Docker volumes (if anything dumped locally)
+pgdata/
+
+# Docker secrets — real secret files are gitignored; only .example files
+# and the .gitkeep stub are committed.
+secrets/*
+!secrets/.gitkeep
+!secrets/*.example
+
+.claude/
+.mcp.json

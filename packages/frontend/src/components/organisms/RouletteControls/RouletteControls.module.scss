@@ -1,0 +1,491 @@
+@use "../../../styles/variables" as v;
+
+.overlay {
+  position: fixed;
+  // Constrain the overlay to the bottom band so the Pixi wheel above remains
+  // visible. The scene centers the wheel around ~36% of viewport height.
+  left: 0;
+  right: 0;
+  top: 50vh;
+  bottom: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 24px 24px;
+  z-index: v.$z-modal;
+  pointer-events: none;
+}
+
+.panel {
+  pointer-events: auto;
+  width: 100%;
+  max-width: 880px;
+  max-height: 50vh;
+  background: v.$color-panel;
+  border: 1px solid v.$color-border;
+  border-radius: v.$radius-lg;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+  display: flex;
+  flex-direction: column;
+  font-family: v.$font-ui;
+  color: v.$color-text;
+  animation: slide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  // Force scrollbar gutter so the scrollbar is always shown (and the layout
+  // is stable) — fixes "user can't tell content scrolls" on macOS.
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+  padding: 12px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  // Firefox: explicit auto-width scrollbar; Chrome/Safari uses ::-webkit-scrollbar below.
+  // (Do NOT use `scrollbar-width: thin` because it disables webkit pseudo-element styling
+  // in newer Chrome, leaving the macOS overlay scrollbar invisible at rest.)
+  scrollbar-color: rgba(255, 215, 0, 0.55) rgba(255, 255, 255, 0.08);
+
+  &::-webkit-scrollbar {
+    width: 14px;
+    -webkit-appearance: none;
+  }
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    margin: 4px 0;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 215, 0, 0.45);
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 215, 0, 0.75);
+    background-clip: padding-box;
+  }
+}
+
+.scrollFade {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.scrollHint {
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 215, 0, 0.9);
+  color: #1a1a1a;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  animation: bounce 1.6s ease-in-out infinite;
+  z-index: 2;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(-50%) translateY(3px);
+    opacity: 0.8;
+  }
+}
+
+.stickyFooter {
+  flex: 0 0 auto;
+  padding: 12px 20px 16px;
+  border-top: 1px solid v.$color-border;
+  background: v.$color-panel;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.totalBet {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.totalAmount {
+  font-size: 18px;
+  font-weight: 800;
+  color: v.$color-accent;
+  line-height: 1;
+}
+
+.title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: v.$color-accent;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: rgba(245, 245, 247, 0.6);
+}
+
+.chipSection {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.chipOptions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chipPill {
+  padding: 8px 16px;
+  border: 1px solid v.$color-border;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: v.$color-text;
+  font-family: v.$font-ui;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    transform 0.08s ease,
+    border-color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.chipPillActive {
+  background: v.$color-accent;
+  color: #1a1a1a;
+  border-color: v.$color-accent;
+
+  &:hover:not(:disabled) {
+    background: #ffd633;
+  }
+}
+
+.board {
+  display: grid;
+  grid-template-columns: 44px 1fr 64px;
+  gap: 4px;
+}
+
+.zeroCell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a7a3b;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: v.$radius-sm;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 18px;
+  transition: filter 0.12s ease;
+
+  &:hover:not(:disabled) {
+    filter: brightness(1.15);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gridRow {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 4px;
+}
+
+.numberCell {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: v.$radius-sm;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 13px;
+  transition:
+    filter 0.12s ease,
+    transform 0.08s ease;
+
+  &:hover:not(:disabled) {
+    filter: brightness(1.2);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.96);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.red {
+  background: #c0392b;
+}
+
+.black {
+  background: #1a1a1a;
+}
+
+.green {
+  background: #0a7a3b;
+}
+
+.numberLabel {
+  pointer-events: none;
+}
+
+.columnButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.outsideCell {
+  position: relative;
+  flex: 1;
+  min-height: 30px;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  color: v.$color-text;
+  border: 1px solid v.$color-border;
+  border-radius: v.$radius-sm;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  transition:
+    background 0.15s ease,
+    transform 0.08s ease;
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.14);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.redOutside {
+  background: rgba(192, 57, 43, 0.7);
+  color: white;
+  border-color: rgba(192, 57, 43, 0.9);
+
+  &:hover:not(:disabled) {
+    background: rgba(192, 57, 43, 0.9);
+  }
+}
+
+.blackOutside {
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.2);
+
+  &:hover:not(:disabled) {
+    background: rgba(0, 0, 0, 0.9);
+  }
+}
+
+.dozenRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+
+.outsideRow {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+}
+
+.chip {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: v.$color-accent;
+  color: #1a1a1a;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+.error {
+  padding: 8px 12px;
+  border-radius: v.$radius-sm;
+  background: rgba(192, 57, 43, 0.2);
+  border: 1px solid rgba(192, 57, 43, 0.5);
+  color: #ffb4ab;
+  font-size: 13px;
+}
+
+.resultPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 1px dashed v.$color-border;
+  border-radius: v.$radius-md;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.resultHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.winningNumber {
+  padding: 4px 10px;
+  border-radius: v.$radius-sm;
+  font-weight: 800;
+  font-size: 14px;
+  color: white;
+}
+
+.winAmount {
+  color: #4ade80;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.muted {
+  color: rgba(245, 245, 247, 0.5);
+  font-size: 13px;
+}
+
+.breakdown {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12px;
+  max-height: 120px;
+  overflow-y: auto;
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 4px;
+  }
+}
+
+.breakdownWin {
+  color: #4ade80;
+}
+
+.breakdownLoss {
+  color: rgba(245, 245, 247, 0.5);
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.spinButton {
+  flex: 1;
+  padding: 14px 24px;
+  font-size: 16px;
+  letter-spacing: 0.08em;
+}
+
+@keyframes slide {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
