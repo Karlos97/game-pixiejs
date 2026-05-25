@@ -35,3 +35,20 @@
 .right {
   display: flex;
 }
+
+@media (max-width: 480px) {
+  .hud {
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    gap: 8px;
+  }
+
+  .left {
+    padding: 6px 10px;
+  }
+
+  .playerName {
+    font-size: 13px;
+  }
+}

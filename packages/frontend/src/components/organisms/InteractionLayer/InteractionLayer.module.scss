@@ -8,3 +8,10 @@
   z-index: v.$z-hud;
   pointer-events: none;
 }
+
+@media (pointer: coarse), (max-width: 768px) {
+  .layer {
+    bottom: auto;
+    top: 80px;
+  }
+}

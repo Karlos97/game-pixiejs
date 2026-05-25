@@ -1,19 +1,24 @@
 import type { Vec2 } from "@experiments/shared";
 import { useGameStore } from "../../store/gameStore";
+import { virtualInput } from "./virtualInput";
 
 export class InputSystem {
   private keys = new Set<string>();
   private interactHandlers: Array<() => void> = [];
   private debugToggleHandlers: Array<() => void> = [];
+  private unsubscribeVirtualInteract: (() => void) | null = null;
 
   attach(): void {
     window.addEventListener("keydown", this.onKeyDown);
     window.addEventListener("keyup", this.onKeyUp);
+    this.unsubscribeVirtualInteract = virtualInput.onInteract(this.onVirtualInteract);
   }
 
   detach(): void {
     window.removeEventListener("keydown", this.onKeyDown);
     window.removeEventListener("keyup", this.onKeyUp);
+    this.unsubscribeVirtualInteract?.();
+    this.unsubscribeVirtualInteract = null;
   }
 
   onInteract(handler: () => void): void {
@@ -35,8 +40,19 @@ export class InputSystem {
     if (this.keys.has("s") || this.keys.has("arrowdown")) y += 1;
     if (this.keys.has("a") || this.keys.has("arrowleft")) x -= 1;
     if (this.keys.has("d") || this.keys.has("arrowright")) x += 1;
+
+    const v = virtualInput.getDirection();
+    x = Math.max(-1, Math.min(1, x + v.x));
+    y = Math.max(-1, Math.min(1, y + v.y));
     return { x, y };
   }
+
+  private onVirtualInteract = (): void => {
+    const state = useGameStore.getState() as unknown as Record<string, unknown>;
+    const scene = typeof state.scene === "string" ? (state.scene as string) : "world";
+    if (scene !== "world") return;
+    for (const h of this.interactHandlers) h();
+  };
 
   private onKeyDown = (e: KeyboardEvent): void => {
     const key = e.key.toLowerCase();

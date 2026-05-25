@@ -1,0 +1,156 @@
+@use "../../../styles/variables" as v;
+
+.root {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: v.$z-hud;
+  touch-action: none;
+  user-select: none;
+}
+
+.dpad {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  display: grid;
+  grid-template-columns: repeat(3, 56px);
+  grid-template-rows: repeat(3, 56px);
+  gap: 4px;
+  pointer-events: auto;
+  touch-action: none;
+}
+
+.arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: v.$color-panel;
+  color: v.$color-text;
+  border: 1px solid v.$color-border;
+  border-radius: v.$radius-md;
+  padding: 0;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition:
+    background 0.1s ease,
+    transform 0.05s ease;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active,
+  &[data-active="true"] {
+    background: rgba(v.$color-accent, 0.85);
+    color: #1a1a1a;
+  }
+}
+
+.up {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.left {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.right {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.down {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.center {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.action {
+  position: absolute;
+  right: 24px;
+  bottom: 32px;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: v.$color-panel;
+  color: v.$color-text;
+  border: 2px solid v.$color-border;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: none;
+  backdrop-filter: blur(10px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.05s ease;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.actionActive {
+  background: v.$color-accent;
+  color: #1a1a1a;
+  border-color: v.$color-accent;
+  animation: actionPulse 1.5s ease-in-out infinite;
+}
+
+.actionLabel {
+  font-family: v.$font-ui;
+  font-weight: 800;
+  font-size: 28px;
+  letter-spacing: 0.02em;
+}
+
+@keyframes actionPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+}
+
+@media (max-width: 480px) {
+  .dpad {
+    grid-template-columns: repeat(3, 48px);
+    grid-template-rows: repeat(3, 48px);
+    left: 12px;
+    bottom: 12px;
+  }
+
+  .action {
+    width: 72px;
+    height: 72px;
+    right: 16px;
+    bottom: 24px;
+  }
+
+  .actionLabel {
+    font-size: 24px;
+  }
+}
+
+@media (max-height: 480px) and (orientation: landscape) {
+  .dpad {
+    grid-template-columns: repeat(3, 48px);
+    grid-template-rows: repeat(3, 48px);
+    bottom: 12px;
+  }
+
+  .action {
+    width: 72px;
+    height: 72px;
+    bottom: 16px;
+  }
+}
